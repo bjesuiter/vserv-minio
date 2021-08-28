@@ -1,0 +1,12 @@
+# TOML Documentation: https://github.com/toml-lang/toml
+# How to use bonnie: https://dev.to/arctic_hen7/an-alternative-to-npm-and-yarn-scripts-bonnie-2idd
+
+# run these scripts with bonnie in your path, 
+# for example: bonnie start
+
+# NOTE: These scripts use the new `docker compose` (without a dash) command
+# See: https://docs.docker.com/compose/cli-command/ 
+# And: https://docs.docker.com/compose/cli-command-compatibility/
+[scripts]
+    start = "doppler run -- docker-compose up --remove-orphans -d"
+    stop  = "docker-compose down"
