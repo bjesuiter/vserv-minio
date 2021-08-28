@@ -1,0 +1,67 @@
+###
+# Dev Notes
+# - needs Installed Publickey in target repo (see setup-base-services.yaml)
+###
+---
+- name: setup-minio
+  hosts: storage-1500
+  become: yes
+  become_user: jb-web-services
+  vars:
+    # service_user_home_dir from group_vars in ansible-vserv repo
+    service_root: '{{service_user_home_dir}}/services/minio'
+    data_root: '{{service_user_home_dir}}/data/minio'
+
+  tasks:
+    - include_vars: service-vault.yaml
+    - name: Clone Repo
+      git:
+        repo: 'git@github.com:bjesuiter/vserv-minio.git'
+        dest: '{{service_root}}'
+        version: 'HEAD'
+        update: 'yes'
+
+    - name: Ensure {{data_root}} folder exists
+      file:
+        path: '{{data_root}}'
+        state: directory
+        mode: '0770'
+
+    - name: Ensure '{{data_root}}/main' folder exists
+      file:
+        path: '{{data_root}}/main'
+        state: directory
+        mode: '0770'
+
+    # variable comes from imported vars, as described here:
+    # https://gist.github.com/tristanfisher/e5a306144a637dc739e7
+    # password for that encrypted file is configured in root ansible.cfg
+    #
+    # Doppler Token comes from doppler dashboard projects/<project_name>/<env>/Access
+    # create a service token with the name of the ansible host/group where this will be deployed
+    # for loose reference on where this token is used
+    #
+    # Insert doppler token into service-vault.yaml next to this playbook as
+    # doppler_token=xxxxxxxxxxxxxxx
+    #
+    # Encrypt service-vault.yaml with bonnie encrypt from vserv-ansible repo
+    - name: Setup doppler cli for this project
+      command:
+        chdir: '{{service_root}}'
+        cmd: 'doppler setup --token={{doppler_token}} --no-prompt'
+      register: doppler_result
+
+    - name: run minio via bonnie
+      command:
+        cmd: bonnie start
+        chdir: '{{service_root}}'
+      register: bonnie_result
+
+    # - name: User Message (For initial setup)
+    #   debug:
+    #     msg:
+    #       - 'AFTER_PLAYBOOK: Finish nextcloud setup (if initial init) '
+    #       - '1. start with npm start'
+    #       - '2. Go to https://nextcloud.avil.io to finish setup'
+    #       - '(Note: This may not work if DNS did not fully propagate through yet)'
+    #       - 'Root Password: find in doppler dashboard'
