@@ -42,7 +42,7 @@
     # for loose reference on where this token is used
     #
     # Insert doppler token into service-vault.yaml next to this playbook as
-    # doppler_token=xxxxxxxxxxxxxxx
+    # doppler_token: xxxxxxxxxxxxxxx
     #
     # Encrypt service-vault.yaml with bonnie encrypt from vserv-ansible repo
     - name: Setup doppler cli for this project
