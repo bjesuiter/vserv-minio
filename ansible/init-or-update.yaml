@@ -4,7 +4,7 @@
 ###
 ---
 - name: setup-minio
-  hosts: storage-1500
+  hosts: storage1500
   become: yes
   become_user: jb-web-services
   vars:
