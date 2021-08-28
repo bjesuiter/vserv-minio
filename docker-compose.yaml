@@ -27,7 +27,7 @@ services:
       # Traefik Config
       - 'traefik.docker.network=web'
       - 'traefik.enable=true'
-      - 'traefik.port=80'
+      - 'traefik.port=9000'
       - 'traefik.protocol=http'
       - 'traefik.frontend.rule=Host:${SERVICE_DOMAIN}' # multiple host-aliases with multiple host rules?
       - 'traefik.frontend.redirect.permanent=true'
