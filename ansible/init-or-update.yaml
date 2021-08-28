@@ -53,7 +53,7 @@
 
     - name: run minio via bonnie
       command:
-        cmd: bonnie start
+        cmd: '{{HOME}}/bin/bonnie start'
         chdir: '{{service_root}}'
       register: bonnie_result
 
