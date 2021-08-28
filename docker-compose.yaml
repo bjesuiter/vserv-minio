@@ -1,0 +1,33 @@
+version: '3'
+
+networks:
+  web:
+    external:
+      name: web
+
+services:
+  minio:
+    image: minio/minio:latest
+    # see official docker-compose for clues
+    # https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/docker-compose/docker-compose.yaml
+    command: server --console-address ":9001" # http://minio{1...4}/data{1...2}
+    restart: always
+    volumes:
+      - ${MINIO_DATA_ROOT}/main:/data
+    environment:
+      # from doppler-cli service
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    networks:
+      - web
+    expose:
+      - '9000'
+      - '9001'
+    labels:
+      # Traefik Config
+      - 'traefik.docker.network=web'
+      - 'traefik.enable=true'
+      - 'traefik.port=80'
+      - 'traefik.protocol=http'
+      - 'traefik.frontend.rule=Host:${SERVICE_DOMAIN}' # multiple host-aliases with multiple host rules?
+      - 'traefik.frontend.redirect.permanent=true'
