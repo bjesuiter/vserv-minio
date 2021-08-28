@@ -7,6 +7,10 @@
 # NOTE: These scripts use the new `docker compose` (without a dash) command
 # See: https://docs.docker.com/compose/cli-command/ 
 # And: https://docs.docker.com/compose/cli-command-compatibility/
+
+# Mandatory from 0.2.0 onwards
+version = "0.3.1"
+
 [scripts]
     start = "doppler run -- docker-compose up --remove-orphans -d"
     stop  = "docker-compose down"
