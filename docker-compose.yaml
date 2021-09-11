@@ -13,7 +13,7 @@ services:
     # see official docker-compose for clues
     # https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/docker-compose/docker-compose.yaml
     # command: 'server --console-address :9001 /data' # http://minio{1...4}/data{1...2}
-    command: 'server /data' # http://minio{1...4}/data{1...2}
+    command: 'server --console-address :9001 /data' # http://minio{1...4}/data{1...2}
     # restart: always
     volumes:
       - ${MINIO_DATA_ROOT}/main:/data
@@ -22,7 +22,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_SERVER_URL: 'https://${SERVICE_DOMAIN}'
-      # MINIO_BROWSER_REDIRECT_URL: 'https://dashboard.${SERVICE_DOMAIN}'
+      MINIO_BROWSER_REDIRECT_URL: 'https://dashboard.${SERVICE_DOMAIN}'
       MINIO_REGION_NAME: 'germany'
       MINIO_REGION_COMMENT: 'Custom Region for jb services'
     healthcheck:
