@@ -12,5 +12,9 @@
 version = "0.3.1"
 
 [scripts]
-    start = "doppler run -- docker-compose up --remove-orphans -d"
-    stop  = "docker-compose down"
+    start       = "doppler run -- docker-compose up --remove-orphans -d"
+    stop        = "doppler run -- docker-compose down"
+    restart     = "doppler run -- docker-compose restart"
+    pull-git    = "git pull --ff"
+    pull-docker = "doppler run -- docker-compose pull"
+    update      = "bonnie stop && bonnie pull-git && bonnie pull-docker && bonnie start"
