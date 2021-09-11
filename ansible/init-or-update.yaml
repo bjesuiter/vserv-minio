@@ -21,7 +21,7 @@
         version: 'traefik_v2'
         update: 'yes'
 
-    - name: Ensure that all required directories for this service exist '
+    - name: Ensure that all required directories for this service exist
       file:
         path: '{{ item }}'
         state: directory
