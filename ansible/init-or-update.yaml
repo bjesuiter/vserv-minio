@@ -18,20 +18,17 @@
       git:
         repo: 'git@github.com:bjesuiter/vserv-minio.git'
         dest: '{{service_root}}'
-        version: 'HEAD'
+        version: 'traefik_v2'
         update: 'yes'
 
-    - name: Ensure {{data_root}} folder exists
+    - name: Ensure that all required directories for this service exist '
       file:
-        path: '{{data_root}}'
+        path: '{{ item }}'
         state: directory
         mode: '0770'
-
-    - name: Ensure '{{data_root}}/main' folder exists
-      file:
-        path: '{{data_root}}/main'
-        state: directory
-        mode: '0770'
+      loop:
+        - '{{data_root}}'
+        - '{{data_root}}/main'
 
     # variable comes from imported vars, as described here:
     # https://gist.github.com/tristanfisher/e5a306144a637dc739e7
@@ -56,6 +53,9 @@
         cmd: '{{HOME}}/bin/bonnie start'
         chdir: '{{service_root}}'
       register: bonnie_result
+
+    - debug:
+        var: bonnie_result
 
     # - name: User Message (For initial setup)
     #   debug:
