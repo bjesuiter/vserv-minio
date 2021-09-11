@@ -12,7 +12,8 @@ services:
     hostname: ${SERVICE_DOMAIN}
     # see official docker-compose for clues
     # https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/docker-compose/docker-compose.yaml
-    command: 'server --console-address :9001 /data' # http://minio{1...4}/data{1...2}
+    # command: 'server --console-address :9001 /data' # http://minio{1...4}/data{1...2}
+    command: 'server /data' # http://minio{1...4}/data{1...2}
     # restart: always
     volumes:
       - ${MINIO_DATA_ROOT}/main:/data
