@@ -12,10 +12,11 @@
 version = "0.3.1"
 
 [scripts]
-    start       = "doppler run -- docker-compose up --remove-orphans -d"
-    stop        = "doppler run -- docker-compose down"
-    restart     = "doppler run -- docker-compose restart"
-    logs        = "doppler run -- docker-compose logs -f minio"
-    pull-git    = "git pull --ff"
-    pull-docker = "doppler run -- docker-compose pull"
-    update      = "bonnie stop && bonnie pull-git && bonnie pull-docker && bonnie start"
+    start        = "doppler run -- docker-compose up --remove-orphans -d"
+    stop         = "doppler run -- docker-compose down"
+    restart-soft = "doppler run -- docker-compose restart"
+    restart      = "bonnie stop && bonnie start"
+    logs         = "doppler run -- docker-compose logs -f minio"
+    pull-git     = "git pull --ff"
+    pull-docker  = "doppler run -- docker-compose pull"
+    update       = "bonnie stop && bonnie pull-git && bonnie pull-docker && bonnie start"
