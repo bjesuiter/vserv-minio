@@ -3,7 +3,7 @@ version: '3'
 networks:
   web:
     external:
-      name: web
+      name: traefikv2
 
 services:
   minio:
@@ -24,10 +24,18 @@ services:
       - '9000'
       - '9001'
     labels:
-      # Traefik Config
-      - 'traefik.docker.network=web'
+      # Traefik V2 Config
       - 'traefik.enable=true'
-      - 'traefik.port=9000'
-      - 'traefik.protocol=http'
-      - 'traefik.frontend.rule=Host:${SERVICE_DOMAIN}' # multiple host-aliases with multiple host rules?
-      - 'traefik.frontend.redirect.permanent=true'
+      - 'traefik.docker.network=traefikv2'
+      - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`)'
+      - 'traefik.http.routers.minio.service=minio@docker'
+      - 'traefik.http.services.minio.loadbalancer.server.port=9000'
+      - 'traefik.http.routers.minio.tls=true'
+      - 'traefik.http.routers.minio.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.minio.tls.domains[0].main=${SERVICE_DOMAIN}'
+
+      # Labels for MinIO Dashboard connection
+      # Adapted from here: https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
+      - traefik.http.routers.minio-dashboard.rule=Host(`dashboard.${SERVICE_DOMAIN}`)
+      - traefik.http.routers.minio-dashboard.service=minio-dashboard
+      - traefik.http.services.minio-dashboard.loadbalancer.server.port=9001
