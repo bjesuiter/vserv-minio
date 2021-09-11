@@ -22,7 +22,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_SERVER_URL: 'https://${SERVICE_DOMAIN}'
-      # MINIO_BROWSER_REDIRECT_URL: 'https://dashboard.${SERVICE_DOMAIN}'
+      MINIO_BROWSER_REDIRECT_URL: 'https://dashboard.${SERVICE_DOMAIN}'
       MINIO_REGION_NAME: 'germany'
       MINIO_REGION_COMMENT: 'Custom Region for jb services'
     healthcheck:
