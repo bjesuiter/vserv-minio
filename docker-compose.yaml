@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 networks:
   web:
@@ -13,13 +13,18 @@ services:
     # see official docker-compose for clues
     # https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/docker-compose/docker-compose.yaml
     command: server --console-address ":9001" # http://minio{1...4}/data{1...2}
-    restart: always
+    # restart: always
     volumes:
       - ${MINIO_DATA_ROOT}/main:/data
     environment:
       # from doppler-cli service
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 20s
+      retries: 3
     networks:
       - web
     expose:
