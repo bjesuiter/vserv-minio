@@ -21,6 +21,8 @@ services:
       # from doppler-cli service
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # Caution: This MINIO_SERVER_URL does not work together with the dashboard redirect.
+      # Therefore MINIO_DOMAIN is used for base API URL
       # MINIO_SERVER_URL: 'https://${SERVICE_DOMAIN}'
       MINIO_DOMAIN: '${SERVICE_DOMAIN}'
       MINIO_BROWSER_REDIRECT_URL: 'https://dashboard.${SERVICE_DOMAIN}'
