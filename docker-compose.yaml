@@ -42,7 +42,7 @@ services:
       # Traefik V2 Config
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefikv2'
-      - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`) || Host(`*.${SERVICE_DOMAIN}`)'
+      - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`) || HostRegexp(`{subdomain:[a-z]+}.${SERVICE_DOMAIN}`)'
       # - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`)'
       - 'traefik.http.routers.minio.service=minio@docker'
       - 'traefik.http.routers.minio.entrypoints=https'
