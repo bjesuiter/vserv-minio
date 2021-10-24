@@ -42,7 +42,7 @@ services:
       # Traefik V2 Config
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefikv2'
-      - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`) || HostRegexp(`{subdomain:[a-z]+}.${SERVICE_DOMAIN}`)'
+      - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`) || HostRegexp(`{bucketname:[a-z]+}.${SERVICE_DOMAIN}`)'
       # - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`)'
       - 'traefik.http.routers.minio.service=minio@docker'
       - 'traefik.http.routers.minio.entrypoints=https'
@@ -56,7 +56,7 @@ services:
 
       # Labels for MinIO Dashboard connection
       # Adapted from here: https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
-      - traefik.http.routers.minio-dashboard.rule=Host(`dashboard.${SERVICE_DOMAIN}`)
+      - traefik.http.routers.minio-dashboard.rule=Host(`dashboard-${SERVICE_DOMAIN}`)
       - traefik.http.routers.minio-dashboard.service=minio-dashboard
       - 'traefik.http.routers.minio-dashboard.entrypoints=https'
       - traefik.http.services.minio-dashboard.loadbalancer.server.port=9001
