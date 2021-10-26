@@ -56,7 +56,9 @@ services:
 
       # Labels for MinIO Dashboard connection
       # Adapted from here: https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
-      - traefik.http.routers.minio-dashboard.rule=Host(`dashboard-${SERVICE_DOMAIN}`)
-      - traefik.http.routers.minio-dashboard.service=minio-dashboard
+      - 'traefik.http.routers.minio-dashboard.rule=Host(`dashboard-${SERVICE_DOMAIN}`)'
+      - 'traefik.http.routers.minio-dashboard.service=minio-dashboard'
       - 'traefik.http.routers.minio-dashboard.entrypoints=https'
-      - traefik.http.services.minio-dashboard.loadbalancer.server.port=9001
+      - 'traefik.http.services.minio-dashboard.loadbalancer.server.port=9001'
+      - 'traefik.http.routers.minio-dashboard.tls=true'
+      - 'traefik.http.routers.minio-dashboard.tls.certresolver=domainoffensive'
