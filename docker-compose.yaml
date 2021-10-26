@@ -43,12 +43,14 @@ services:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefikv2'
       - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`) || HostRegexp(`{bucketname:[a-z]+}.${SERVICE_DOMAIN}`)'
-      - 'traefik.http.routers.minio.entrypoints=https'
       - 'traefik.http.routers.minio.service=minio@docker'
       - 'traefik.http.services.minio.loadbalancer.server.port=9000'
+      - 'traefik.http.routers.minio.entrypoints=https'
+      # Note: All SSL Settigns are done on the Entrypoint 'https'
+      # Old SSL Settings for reference
       # Should use default cert resolver (=domainoffensive)
-      - 'traefik.http.routers.minio.tls=true'
-      - 'traefik.http.routers.minio.tls.certresolver=domainoffensive'
+      # - 'traefik.http.routers.minio.tls=true'
+      # - 'traefik.http.routers.minio.tls.certresolver=domainoffensive'
       # This container should use the automatic wildcard certificate from the domainoffensive certresolver
       # - 'traefik.http.routers.minio.tls.domains[0].main=${SERVICE_DOMAIN}'
       # Wildcard Domain! (Needs dns verification via certresolver=domainoffensive)
@@ -57,8 +59,7 @@ services:
       # Labels for MinIO Dashboard connection
       # Adapted from here: https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
       - 'traefik.http.routers.minio-dashboard.rule=Host(`dashboard-${SERVICE_DOMAIN}`)'
-      - 'traefik.http.routers.minio-dashboard.entrypoints=https'
       - 'traefik.http.routers.minio-dashboard.service=minio-dashboard'
       - 'traefik.http.services.minio-dashboard.loadbalancer.server.port=9001'
-      # - 'traefik.http.routers.minio-dashboard.tls=true'
-      # - 'traefik.http.routers.minio-dashboard.tls.certresolver=domainoffensive'
+      - 'traefik.http.routers.minio-dashboard.entrypoints=https'
+      # Note: All SSL Settigns are done on the Entrypoint 'https'
