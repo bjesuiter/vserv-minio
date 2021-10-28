@@ -70,6 +70,8 @@ services:
   minio-s3-sync:
     image: minio/mc:RELEASE.2021-10-07T04-19-58Z
     container_name: minio-s3-sync
+    networks: 
+      - minionet
     environment: 
       - AWS_ACCESS_KEY
       - AWS_SECRET_KEY
