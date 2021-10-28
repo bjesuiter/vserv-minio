@@ -28,3 +28,4 @@ Option 2: Client-Side Bucket Replication with `mc mirror`
 => Good: Reduces number of GET/POST Requests to O(n) (only when running incremental!)
 => Problem: mirror must make many more GET requsts for first run, if it doesn't work incrementally
 => Good: mc mirror has a 'watch mode'
+=> https://docs.min.io/minio/baremetal/reference/minio-cli/minio-mc/mc-mirror.html#continuously-mirror-s3-bucket-to-an-s3-compatible-host

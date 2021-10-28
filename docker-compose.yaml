@@ -1,6 +1,7 @@
 version: '3.7'
 
 networks:
+  minionet:
   web:
     external:
       name: traefikv2
@@ -17,6 +18,8 @@ services:
     # restart: always
     volumes:
       - ${MINIO_DATA_ROOT}/main:/data
+    networks: 
+      - minionet
     environment:
       # from doppler-cli service
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
@@ -63,3 +66,18 @@ services:
       - 'traefik.http.services.minio-dashboard.loadbalancer.server.port=9001'
       - 'traefik.http.routers.minio-dashboard.entrypoints=https'
       # Note: All SSL Settigns are done on the Entrypoint 'https'
+
+  minio-s3-sync:
+    image: minio/mc:RELEASE.2021-10-07T04-19-58Z
+    container_name: minio-s3-sync
+    environment: 
+      - AWS_ACCESS_KEY
+      - AWS_SECRET_KEY
+      - MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY
+    # Formats: 
+    # mc alias set ALIAS HOSTNAME ACCESS_KEY SECRET_KEY
+    # mc mirror --watch SRCALIAS/SRCPATH TGTALIAS/TGTPATH
+    command: > mc alias set storage1500 minio MINIO_ACCESS_KEY MINIO_SECRET_KEY 
+      && mc alias set aws s3.amazonaws.com AWS_ACCESS_KEY AWS_SECRET_KEY 
+      && mc mirror --watch storage1500/nextcloud aws/jb-vserv-backups/${SERVICE_DOMAIN}'
