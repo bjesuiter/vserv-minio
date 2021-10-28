@@ -20,10 +20,11 @@ Option 1: Minio Server to (Minio S3 Gateway => AWS S3) Replication
 
 => Problem: same number of GET / POST Requests on AWS as on my MINIO Server => increases COST
 => Problem: more complicated, since this gateway setup is needed
+=> Problem: needs versioning on the Bucket & Versioning is only possible in replicated setups
 => Good: immediate mirror
 
 Option 2: Client-Side Bucket Replication with `mc mirror`
 => Good: Can replicate to AWS S3 directly :)
-=> Good: Reduces number of GET/POST Requests to O(n)
-
-=> New Idea: mirror must make many more GET requsts for first run,
+=> Good: Reduces number of GET/POST Requests to O(n) (only when running incremental!)
+=> Problem: mirror must make many more GET requsts for first run, if it doesn't work incrementally
+=> Good: mc mirror has a 'watch mode'
