@@ -84,6 +84,6 @@ services:
       - "/bin/sh"
       - -ecx
       - | 
-          mc alias set storage1500 minio MINIO_ACCESS_KEY MINIO_SECRET_KEY \
-          && mc alias set aws s3.amazonaws.com AWS_ACCESS_KEY AWS_SECRET_KEY \
+          mc alias set storage1500 http://minio:9000 MINIO_ACCESS_KEY MINIO_SECRET_KEY \
+          && mc alias set aws https://s3.amazonaws.com AWS_ACCESS_KEY AWS_SECRET_KEY \
           && mc mirror --watch storage1500/nextcloud aws/jb-vserv-backups/${SERVICE_DOMAIN}
