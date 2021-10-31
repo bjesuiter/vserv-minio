@@ -18,7 +18,7 @@
       git:
         repo: 'git@github.com:bjesuiter/vserv-minio.git'
         dest: '{{service_root}}'
-        version: 'traefik_v2'
+        version: 'main'
         update: 'yes'
 
     - name: Ensure that all required directories for this service exist
