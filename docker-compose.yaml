@@ -84,6 +84,6 @@ services:
       - "/bin/sh"
       - -ecx
       - | 
-          mc alias set storage1500 https://${SERVICE_DOMAIN} ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY} \
-          && mc alias set aws https://s3.amazonaws.com ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} \
+          mc alias set storage1500 https://${SERVICE_DOMAIN} ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY} --api S3v4 \
+          && mc alias set aws https://s3.amazonaws.com ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} --api S3v4 \
           && mc mirror --watch storage1500/nextcloud aws/${SERVICE_DOMAIN}
