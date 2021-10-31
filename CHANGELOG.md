@@ -8,3 +8,5 @@ Functional Setup with:
   - for dashboard-minio.storage1500.vserv.fun
   - for \*.minio.sotrage1500.vserv.fun
 - Backup mirroring via `mc mirror --watch` from minio.storage1500.vserv.fun to AWS S3
+
+compatible with vserv-traefik:v2.1.0
