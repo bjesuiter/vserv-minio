@@ -1,33 +1,90 @@
-version: '3'
+version: '3.7'
 
 networks:
+  minionet:
   web:
     external:
-      name: web
+      name: traefikv2
 
 services:
   minio:
     image: minio/minio:latest
+    container_name: minio
+    hostname: ${SERVICE_DOMAIN}
     # see official docker-compose for clues
     # https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/docker-compose/docker-compose.yaml
-    command: server --console-address ":9001" # http://minio{1...4}/data{1...2}
-    restart: always
+    # command: 'server --console-address :9001 /data' # http://minio{1...4}/data{1...2}
+    command: 'server --console-address :9001 /data' # http://minio{1...4}/data{1...2}
+    # restart: always
     volumes:
       - ${MINIO_DATA_ROOT}/main:/data
+    networks: 
+      - minionet
     environment:
       # from doppler-cli service
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # Caution: This MINIO_SERVER_URL does not work together with the dashboard redirect.
+      # Therefore MINIO_DOMAIN is used for base API URL
+      # MINIO_SERVER_URL: 'https://${SERVICE_DOMAIN}'
+      MINIO_DOMAIN: '${SERVICE_DOMAIN}'
+      MINIO_BROWSER_REDIRECT_URL: 'https://dashboard.${SERVICE_DOMAIN}'
+      MINIO_REGION_NAME: 'germany'
+      MINIO_REGION_COMMENT: 'Custom Region for jb services'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 20s
+      retries: 3
     networks:
       - web
     expose:
       - '9000'
       - '9001'
     labels:
-      # Traefik Config
-      - 'traefik.docker.network=web'
+      # Traefik V2 Config
       - 'traefik.enable=true'
-      - 'traefik.port=9000'
-      - 'traefik.protocol=http'
-      - 'traefik.frontend.rule=Host:${SERVICE_DOMAIN}' # multiple host-aliases with multiple host rules?
-      - 'traefik.frontend.redirect.permanent=true'
+      - 'traefik.docker.network=traefikv2'
+      - 'traefik.http.routers.minio.rule=Host(`${SERVICE_DOMAIN}`) || HostRegexp(`{bucketname:[a-z]+}.${SERVICE_DOMAIN}`)'
+      - 'traefik.http.routers.minio.service=minio@docker'
+      - 'traefik.http.services.minio.loadbalancer.server.port=9000'
+      - 'traefik.http.routers.minio.entrypoints=https'
+      # Note: All SSL Settigns are done on the Entrypoint 'https'
+
+      # Special SSL Settings 
+      # This container should use the automatic wildcard certificate from the domainoffensive certresolver
+      # But since this seems not to work currently, it uses this explicit domain config and wildcard
+      # for minio buckets
+      - 'traefik.http.routers.minio.tls=true'
+      - 'traefik.http.routers.minio.tls.certresolver=domainoffensive'
+      - 'traefik.http.routers.minio.tls.domains[0].main=${SERVICE_DOMAIN}'
+      - 'traefik.http.routers.minio.tls.domains[0].sans=*.${SERVICE_DOMAIN}'
+
+      # Labels for MinIO Dashboard connection
+      # Adapted from here: https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
+      - 'traefik.http.routers.minio-dashboard.rule=Host(`dashboard-${SERVICE_DOMAIN}`)'
+      - 'traefik.http.routers.minio-dashboard.service=minio-dashboard'
+      - 'traefik.http.services.minio-dashboard.loadbalancer.server.port=9001'
+      - 'traefik.http.routers.minio-dashboard.entrypoints=https'
+      # Note: All SSL Settigns are done on the Entrypoint 'https'
+
+  minio-s3-sync:
+    image: minio/mc:RELEASE.2021-10-07T04-19-58Z
+    container_name: minio-s3-sync
+    networks: 
+      - minionet
+    environment: 
+      - AWS_ACCESS_KEY
+      - AWS_SECRET_KEY
+      - MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY
+    # Formats: 
+    # mc alias set ALIAS HOSTNAME ACCESS_KEY SECRET_KEY
+    # mc mirror --watch SRCALIAS/SRCPATH TGTALIAS/TGTPATH
+    entrypoint:
+      - "/bin/sh"
+      - -ecx
+      - | 
+          mc alias set storage1500 https://${SERVICE_DOMAIN} ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY} --api S3v4 \
+          && mc alias set aws https://s3.amazonaws.com ${AWS_ACCESS_KEY} ${AWS_SECRET_KEY} --api S3v4 \
+          && mc mirror --watch storage1500/nextcloud aws/${SERVICE_DOMAIN}
