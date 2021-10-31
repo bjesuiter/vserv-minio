@@ -50,14 +50,15 @@ services:
       - 'traefik.http.services.minio.loadbalancer.server.port=9000'
       - 'traefik.http.routers.minio.entrypoints=https'
       # Note: All SSL Settigns are done on the Entrypoint 'https'
-      # Old SSL Settings for reference
-      # Should use default cert resolver (=domainoffensive)
-      # - 'traefik.http.routers.minio.tls=true'
-      # - 'traefik.http.routers.minio.tls.certresolver=domainoffensive'
+
+      # Special SSL Settings 
       # This container should use the automatic wildcard certificate from the domainoffensive certresolver
-      # - 'traefik.http.routers.minio.tls.domains[0].main=${SERVICE_DOMAIN}'
-      # Wildcard Domain! (Needs dns verification via certresolver=domainoffensive)
-      # - 'traefik.http.routers.minio.tls.domains[0].sans=*.${SERVICE_DOMAIN}'
+      # But since this seems not to work currently, it uses this explicit domain config and wildcard
+      # for minio buckets
+      - 'traefik.http.routers.minio.tls=true'
+      - 'traefik.http.routers.minio.tls.certresolver=domainoffensive'
+      - 'traefik.http.routers.minio.tls.domains[0].main=${SERVICE_DOMAIN}'
+      - 'traefik.http.routers.minio.tls.domains[0].sans=*.${SERVICE_DOMAIN}'
 
       # Labels for MinIO Dashboard connection
       # Adapted from here: https://github.com/dani-garcia/vaultwarden/wiki/Proxy-examples
